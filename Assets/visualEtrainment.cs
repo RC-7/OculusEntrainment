@@ -21,12 +21,19 @@ public class visualEtrainment : MonoBehaviour
 
     }
 
+    public void setRefresh(float refreshUpdate)
+    {
+        refresh = refreshUpdate;
+        CancelInvoke();
+        InvokeRepeating("flash", 0, refresh);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         refresh = 0.1f;
 
-        InvokeRepeating("flash", refresh, refresh);
+        InvokeRepeating("flash", 0, refresh);
         Debug.Log("I am alive!");
 
     }
