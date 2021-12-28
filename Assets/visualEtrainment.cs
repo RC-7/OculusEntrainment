@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class visualEtrainment : MonoBehaviour
 {
-    private float refresh;
+    private float refreshRate;
+    private int timeToStartRefresh;
 
     void flash()    
     {
@@ -23,24 +24,22 @@ public class visualEtrainment : MonoBehaviour
 
     public void setRefresh(float refreshUpdate)
     {
-        refresh = refreshUpdate;
+        refreshRate = refreshUpdate;
         CancelInvoke();
-        InvokeRepeating("flash", 0, refresh);
+        InvokeRepeating("flash", timeToStartRefresh, refreshRate);
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        refresh = 0.1f;
+        refreshRate = 0.1f;
+        timeToStartRefresh = 0;
 
-        InvokeRepeating("flash", 0, refresh);
+        InvokeRepeating("flash", timeToStartRefresh, refreshRate);
         Debug.Log("I am alive!");
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        /*CancelInvoke();*/
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class networkController : MonoBehaviour
 {
     private float refresh;
-    // Start is called before the first frame update
 
     private void updateFlashing()
     {
@@ -20,7 +19,6 @@ public class networkController : MonoBehaviour
         InvokeRepeating("updateFlashing", 10.0f, 10.0f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
