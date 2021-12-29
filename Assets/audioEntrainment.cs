@@ -19,7 +19,7 @@ public class audioEntrainment : MonoBehaviour
     void Start()
     {
 
-        frequency1 = 500.0f;
+        frequency1 = 500.0f; // Make this difference dynamic based on set value
         frequency2 = 503.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
@@ -37,24 +37,6 @@ public class audioEntrainment : MonoBehaviour
             timeIndex = 0;  //resets timer before playing sound
             audioSource.Play();
         }
-        /*else
-        {
-            audioSource.Stop();
-            Debug.Log("Form upload complete!");
-        }*/
-
-        /*if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (!audioSource.isPlaying)
-            {
-                timeIndex = 0;  //resets timer before playing sound
-                audioSource.Play();
-            }
-            else
-            {
-                audioSource.Stop();
-            }
-        }*/
     }
 
     void OnAudioFilterRead(float[] data, int channels)
