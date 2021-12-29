@@ -47,7 +47,7 @@ public class networkController : MonoBehaviour
     }
 
     // Querries settings from API on AWS every 30 s
-    private async void querrySettings()
+    private void querrySettings()
     {
         StartCoroutine(makeRequest()); // Allows the coroutine to be non blocking
     }
