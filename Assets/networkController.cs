@@ -5,31 +5,43 @@ using UnityEngine.Networking;
 
 public class networkController : MonoBehaviour
 {
-    private float refreshRate;
-
+    private float refreshRateNormal = 300.0f;
+    private float shortPoll = 15.0f;
+    private bool normalPoll = true;
     private string serverResponse;
     private AWSResourceValues awsResourceValues;
     private SettingsObject settings;
     private string entrainmentDataType = "entrainmentSettings";
 
-    private void updateFlashing()
+    // Add update to color of ball
+    private void updateVisualEntrainment()
     {
         GameObject visualEntrainmentObject = GameObject.Find("visualEntrainment");
         visualEtrainment visualEtrainmentsScript = (visualEtrainment)visualEntrainmentObject.GetComponent(typeof(visualEtrainment));
-        visualEtrainmentsScript.setRefresh(refreshRate);
+        float refreshRateHz = float.Parse(settings.visual.frequency);
+        float refreshRateS = 1 / refreshRateHz;
+        visualEtrainmentsScript.setRefresh(refreshRateS);
+    }
+
+    private void updateAudioEntrainment()
+    {
+        GameObject audioEntrainmentObject = GameObject.Find("audioEntrainment");
+        audioEntrainment audioEntrainmentScript = (audioEntrainment)audioEntrainmentObject.GetComponent(typeof(audioEntrainment));
+        float baseFrequency = float.Parse(settings.audio.baseFrequency);
+        float entrainmentFrequency = float.Parse(settings.audio.entrainmentFrequency);
+        audioEntrainmentScript.UpdateAudioEntrainment(baseFrequency, entrainmentFrequency);
     }
 
     // Updates settings of current entrainment if they are due to be changed
     private void updateEntrainment()
     {
-        // Upodate refreshRate
-        // Update audio frequnecy
+        updateVisualEntrainment();
+        updateAudioEntrainment();
     }
 
     public static T ImportJson<T>(string path)
     {
         TextAsset textAsset = Resources.Load<TextAsset>(path);
-        Debug.Log(textAsset.text);
         return JsonUtility.FromJson<T>(textAsset.text);
     }
 
@@ -40,7 +52,6 @@ public class networkController : MonoBehaviour
 
     IEnumerator makeRequest()
     {
-        // Populate form with fields to make request to API
         RequestBody body = new RequestBody();
 
         body.projectionAttributes = "customEntrainment";
@@ -63,21 +74,34 @@ public class networkController : MonoBehaviour
             {
                 // Refresh sooner
                 Debug.Log(www.error);
+                CancelInvoke();
+                InvokeRepeating("querrySettings", 1.0f, shortPoll);
+                normalPoll = false;
             }
             else
             {
                 serverResponse = www.downloadHandler.text;
                 Debug.Log(www.downloadHandler.text);
                 string settingJSONString = www.downloadHandler.text.Substring(23, www.downloadHandler.text.Length - 25);
-                Debug.Log(settingJSONString);
-                //SettingsObject settingsRecieved = ImportJson<SettingsObject>(settingJSONString);
                 SettingsObject settingsRecieved = ImportJsonString<SettingsObject>(settingJSONString);
                 Debug.Log(settingsRecieved.visual.frequency);
+                if (JsonUtility.ToJson(settingsRecieved) != JsonUtility.ToJson(settings))
+                {
+                    settings = settingsRecieved;
+                    updateEntrainment();
+                    if (!normalPoll)
+                    {
+                        CancelInvoke();
+                        InvokeRepeating("querrySettings", 1.0f, refreshRateNormal);
+                    }
+
+                }
+
             }
         }
     }
 
-    // Querries settings from API on AWS every 5 min
+    // Querries settings from API on AWS every 5 min in normal operation
     private void querrySettings()
     {
         StartCoroutine(makeRequest()); // Allows the coroutine to be non blocking
@@ -85,8 +109,7 @@ public class networkController : MonoBehaviour
     void Start()
     {
         awsResourceValues = ImportJson<AWSResourceValues>("aws_resources");
-        refreshRate = 2.0f; // Pull in from a common file for all settings
-        InvokeRepeating("querrySettings", 1.0f, 30.0f);
+        InvokeRepeating("querrySettings", 1.0f, refreshRateNormal);
     }
 
 void Update()

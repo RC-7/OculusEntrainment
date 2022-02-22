@@ -39,6 +39,19 @@ public class audioEntrainment : MonoBehaviour
         }
     }
 
+    public void UpdateAudioEntrainment(float baseFrequency, float entrainmentFrequency)
+    {
+        frequency1 = baseFrequency;
+        frequency2 = baseFrequency + entrainmentFrequency;
+        waveLengthInSeconds = 1 / baseFrequency; // Improve this, is it even needed?
+
+        if (!audioSource.isPlaying)
+        {
+            timeIndex = 0;  //resets timer before playing sound
+            audioSource.Play();
+        }
+    }
+
     void OnAudioFilterRead(float[] data, int channels)
     {
         for (int i = 0; i < data.Length; i += channels)
