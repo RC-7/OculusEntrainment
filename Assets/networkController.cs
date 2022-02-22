@@ -23,13 +23,19 @@ public class networkController : MonoBehaviour
         // Update audio frequnecy
     }
 
+    public static T ImportJson<T>(string path)
+    {
+        TextAsset textAsset = Resources.Load<TextAsset>(path);
+        return JsonUtility.FromJson<T>(textAsset.text);
+    }
+
     IEnumerator makeRequest()
     {
         // Populate form with fields to make request to API
         WWWForm form = new WWWForm();
         form.AddField("myField", "myData");
 
-        using (UnityWebRequest www = UnityWebRequest.Post("https://www.google.com/index.html", form)) // Pull from a common file
+        using (UnityWebRequest www = UnityWebRequest.Post("", form)) // Pull from a common file
         {
             yield return www.SendWebRequest();
 
@@ -41,7 +47,6 @@ public class networkController : MonoBehaviour
             {
                 serverResponse = www.downloadHandler.text;
                 Debug.Log(www.downloadHandler.text);
-                Debug.Log("Form upload complete!");
             }
         }
     }
@@ -53,9 +58,10 @@ public class networkController : MonoBehaviour
     }
     void Start()
     {
-        refreshRate = 2.0f; // Pull in from a common file for all settings
-        InvokeRepeating("querrySettings", 10.0f, 30.0f);
-}
+        AWSResourceValues awsResourceValues = ImportJson<AWSResourceValues>("aws_resources");
+        //refreshRate = 2.0f; // Pull in from a common file for all settings
+        //InvokeRepeating("querrySettings", 10.0f, 30.0f);
+    }
 
 void Update()
     {
