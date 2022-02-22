@@ -7,7 +7,7 @@ public class visualEtrainment : MonoBehaviour
     private float refreshRate;
     private int timeToStartRefresh;
 
-    void flash()    // Look at syncronising this with the audio, i.e. when the audio is say above 70 % or something of the sign in update then we flash or something similar GG's that would solve the issue completely!! Can do in the controller class
+    void flash()
     {
         GameObject visualEntrainmentObject = GameObject.Find("visualEntrainment");
 

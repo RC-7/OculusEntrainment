@@ -4,22 +4,17 @@ using UnityEngine;
 
 public class audioEntrainment : MonoBehaviour
 {
-    /*[Range(1, 20000)]  //Creates a slider in the inspector*/
     public float frequency1;
-
-    /*[Range(1, 20000)]  //Creates a slider in the inspector*/
     public float frequency2;
-
     public float sampleRate = 44100;
     public float waveLengthInSeconds = 2.0f;
-
     AudioSource audioSource;
     int timeIndex = 0;
 
     void Start()
     {
 
-        frequency1 = 500.0f; // Make this difference dynamic based on set value
+        frequency1 = 500.0f;
         frequency2 = 503.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
@@ -30,7 +25,6 @@ public class audioEntrainment : MonoBehaviour
 
     void Update()
     {
-        // Add logic to reset when we swicth frequency
 
         if (!audioSource.isPlaying)
         {
