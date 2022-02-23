@@ -13,9 +13,9 @@ public class audioEntrainment : MonoBehaviour
 
     void Start()
     {
-
-        frequency1 = 500.0f;
-        frequency2 = 503.0f;
+        // Defaults to Alphda waves
+        frequency1 = 450.0f;
+        frequency2 = 460.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.volume = 0.5f;
