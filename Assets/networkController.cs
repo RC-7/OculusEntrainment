@@ -32,11 +32,21 @@ public class networkController : MonoBehaviour
         audioEntrainmentScript.UpdateAudioEntrainment(baseFrequency, entrainmentFrequency);
     }
 
+    private void updateNeurofeedback()
+    {
+        GameObject neurofeedbackObject = GameObject.Find("neurofeedback");
+        neurofeedback neurofeedbackScript = (neurofeedback)neurofeedbackObject.GetComponent(typeof(neurofeedback));
+        float redChannel = float.Parse(settings.neurofeedback.redChannel)/255;
+        float greenChannel = float.Parse(settings.neurofeedback.greenChannel)/255;
+        neurofeedbackScript.UpdateColour(redChannel, greenChannel);
+    }
+
     // Updates settings of current entrainment if they are due to be changed
     private void updateEntrainment()
     {
         updateVisualEntrainment();
         updateAudioEntrainment();
+        updateNeurofeedback();
     }
 
     public static T ImportJson<T>(string path)

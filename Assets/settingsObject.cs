@@ -21,5 +21,6 @@ public class Audio
 [Serializable]
 public class Neurofeedback
 {
-    public string colour;
+    public string redChannel;
+    public string greenChannel;
 }
