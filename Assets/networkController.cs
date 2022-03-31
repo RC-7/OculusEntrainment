@@ -93,6 +93,7 @@ public class networkController : MonoBehaviour
                 serverResponse = www.downloadHandler.text;
                 Debug.Log(www.downloadHandler.text);
                 string settingJSONString = www.downloadHandler.text.Substring(23, www.downloadHandler.text.Length - 25);
+                Debug.Log(settingJSONString);
                 SettingsObject settingsRecieved = ImportJsonString<SettingsObject>(settingJSONString);
                 Debug.Log(settingsRecieved.visual.frequency);
                 if (JsonUtility.ToJson(settingsRecieved) != JsonUtility.ToJson(settings))

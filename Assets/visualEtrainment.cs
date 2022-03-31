@@ -31,7 +31,7 @@ public class visualEtrainment : MonoBehaviour
 
     void Start()
     {
-        refreshRate = 0.1f;
+        refreshRate = 20.0f;
         timeToStartRefresh = 0;
 
         InvokeRepeating("flash", timeToStartRefresh, refreshRate);

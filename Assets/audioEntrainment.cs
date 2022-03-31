@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class audioEntrainment : MonoBehaviour
 {
     public float frequency1;
     public float frequency2;
-    public float sampleRate = 44100;
-    public float waveLengthInSeconds = 2.0f;
+    public float sampleRate = 10000;
     AudioSource audioSource;
     int timeIndex = 0;
 
@@ -23,12 +23,23 @@ public class audioEntrainment : MonoBehaviour
         audioSource.Stop(); //avoids audiosource from starting to play automatically
     }
 
+    void SaveArrayAsCSV<T>(T[] arrayToSave, string fileName)
+    {
+        using (StreamWriter file = new StreamWriter(fileName, true))
+        {
+            for (int j = 0; j<arrayToSave.Length; j += 2)
+            {
+                file.Write(arrayToSave[j].ToString().Replace(',', '.') + "," + arrayToSave[j+1].ToString().Replace(',', '.') + '\n');
+            }
+        }
+    }
+
     void Update()
     {
 
         if (!audioSource.isPlaying)
         {
-            timeIndex = 0;  //resets timer before playing sound
+            Debug.Log("Resetting");
             audioSource.Play();
         }
     }
@@ -37,7 +48,6 @@ public class audioEntrainment : MonoBehaviour
     {
         frequency1 = baseFrequency;
         frequency2 = baseFrequency + entrainmentFrequency;
-        waveLengthInSeconds = 1 / baseFrequency; // Improve this, is it even needed?
 
         if (!audioSource.isPlaying)
         {
@@ -56,12 +66,13 @@ public class audioEntrainment : MonoBehaviour
                 data[i + 1] = CreateSine(timeIndex, frequency2, sampleRate);
 
             timeIndex++;
-
-            //if timeIndex gets too big, reset it to 0
-            if (timeIndex >= (sampleRate * waveLengthInSeconds))
+            // TODO make practical
+            if (data[i] == 0 && data[i + 1] == 0 && timeIndex != 0 && timeIndex > 10000000)
             {
+                Debug.Log("reset time index");
                 timeIndex = 0;
             }
+            
         }
     }
 
