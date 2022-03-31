@@ -13,7 +13,7 @@ public class visualEtrainment : MonoBehaviour
 
         if (visualEntrainmentObject.transform.localScale.y <= 0)
         {
-            visualEntrainmentObject.transform.localScale = new Vector3(1, 1, 1);
+            visualEntrainmentObject.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         }
         else if (visualEntrainmentObject.transform.localScale.y > 0)
         {

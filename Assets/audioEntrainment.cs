@@ -8,12 +8,13 @@ public class audioEntrainment : MonoBehaviour
     public float frequency1;
     public float frequency2;
     public float sampleRate = 10000;
+
     AudioSource audioSource;
     int timeIndex = 0;
 
     void Start()
     {
-        // Defaults to Alphda waves
+        // Defaults to Alpha waves
         frequency1 = 450.0f;
         frequency2 = 460.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
@@ -66,11 +67,10 @@ public class audioEntrainment : MonoBehaviour
                 data[i + 1] = CreateSine(timeIndex, frequency2, sampleRate);
 
             timeIndex++;
-            // TODO make practical
-            if (data[i] == 0 && data[i + 1] == 0 && timeIndex != 0 && timeIndex > 10000000)
+            if ((float)timeIndex == sampleRate*2.0f)
             {
                 Debug.Log("reset time index");
-                timeIndex = 0;
+                timeIndex -= (int)(sampleRate);
             }
             
         }
