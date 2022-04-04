@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class networkController : MonoBehaviour
 {
-    private float refreshRateNormal = 300.0f;
+    private float refreshRateNormal = 60.0f;
     private float shortPoll = 15.0f;
     private bool normalPoll = true;
     private string serverResponse;
