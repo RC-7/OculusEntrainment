@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+
 public class audioEntrainment : MonoBehaviour
 {
     public float frequency1;
     public float frequency2;
     public float sampleRate = 10000;
-
+    System.Random rng = new System.Random();
     AudioSource audioSource;
     int timeIndex = 0;
 
@@ -40,7 +41,7 @@ public class audioEntrainment : MonoBehaviour
 
         if (!audioSource.isPlaying)
         {
-            Debug.Log("Resetting");
+            //Debug.Log("Resetting");
             audioSource.Play();
         }
     }
@@ -57,7 +58,7 @@ public class audioEntrainment : MonoBehaviour
         }
     }
 
-    void OnAudioFilterRead(float[] data, int channels)
+    void generateBinauralBeat(ref float[] data, int channels)
     {
         for (int i = 0; i < data.Length; i += channels)
         {
@@ -67,19 +68,64 @@ public class audioEntrainment : MonoBehaviour
                 data[i + 1] = CreateSine(timeIndex, frequency2, sampleRate);
 
             timeIndex++;
-            if ((float)timeIndex == sampleRate*2.0f)
+            if ((float)timeIndex == sampleRate * 2.0f)
             {
-                Debug.Log("reset time index");
+                //Debug.Log("reset time index");
                 timeIndex -= (int)(sampleRate);
             }
-            
+
         }
     }
 
-    //Creates a sinewave
-    public float CreateSine(int timeIndex, float frequency, float sampleRate)
+    void generatePinkNoise(ref float[] data, int channels)
     {
-        return Mathf.Sin(2 * Mathf.PI * timeIndex * frequency / sampleRate);
+        for (int i = 0; i < data.Length; i += channels)
+        {
+            data[i] = CreatePinkNoise(timeIndex, sampleRate);
+
+            if (channels == 2)
+                data[i + 1] = data[i];
+
+            timeIndex++;
+            if ((float)timeIndex == sampleRate * 2.0f)
+            {
+                //Debug.Log("reset time index");
+                timeIndex -= (int)(sampleRate);
+            }
+
+        }
+    }
+
+    void OnAudioFilterRead(float[] data, int channels)
+    {
+        if (frequency1 != - 1)
+        {
+            generateBinauralBeat(ref data, channels);
+        }
+        else 
+        {
+            generatePinkNoise(ref data, channels);
+        }
+    }
+
+    
+    public float CreatePinkNoise(int timeIndex, float sampleRate)
+    {
+        
+        float noise_value = 0.0f;
+        for (int i = 0; i <= 100; i++)
+        {
+            float randomPhase = (float)rng.Next(180);
+            float amplitudeScaling = (float)System.Math.Pow(i, -0.4);
+            noise_value += amplitudeScaling*CreateSine(timeIndex, (float)i, sampleRate, randomPhase);
+        }
+        return noise_value;
+    }
+    
+
+    public float CreateSine(int timeIndex, float frequency, float sampleRate, float phase = 0)
+    {
+        return Mathf.Sin(2 * Mathf.PI * timeIndex * frequency / sampleRate + 2 * Mathf.PI * phase);
     }
 
 }

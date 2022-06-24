@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class networkController : MonoBehaviour
 {
-    private float refreshRateNormal = 60.0f;
+    private float refreshRateNormal = 30.0f;
     private float shortPoll = 15.0f;
     private bool normalPoll = true;
     private string serverResponse;
@@ -112,7 +112,7 @@ public class networkController : MonoBehaviour
         }
     }
 
-    // Querries settings from API on AWS every 5 min in normal operation
+    // Querries settings from API on AWS every 30 s in normal operation
     private void querrySettings()
     {
         StartCoroutine(makeRequest()); // Allows the coroutine to be non blocking
