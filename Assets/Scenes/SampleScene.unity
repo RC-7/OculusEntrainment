@@ -496,6 +496,7 @@ MonoBehaviour:
   frequency1: 0
   frequency2: 0
   sampleRate: 44100
+  mySound: {fileID: 0}
 --- !u!4 &938454629
 Transform:
   m_ObjectHideFlags: 0

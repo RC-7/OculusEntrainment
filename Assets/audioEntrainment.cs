@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System.Globalization;
 
 
 public class audioEntrainment : MonoBehaviour
 {
     public float frequency1;
     public float frequency2;
-    public float sampleRate = 10000;
+    public float sampleRate = 48000;
     System.Random rng = new System.Random();
     AudioSource audioSource;
     int timeIndex = 0;
+    public AudioClip pinkNoiseWav;
+    List<float> pinkNoise = new List<float>();
 
     void Start()
     {
@@ -19,10 +22,14 @@ public class audioEntrainment : MonoBehaviour
         frequency1 = 450.0f;
         frequency2 = 460.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.loop = true;
+        pinkNoiseWav = Resources.Load<AudioClip>("pinkNoise");
+        audioSource.clip = pinkNoiseWav;
         audioSource.playOnAwake = false;
         audioSource.volume = 0.5f;
         audioSource.spatialBlend = 0; //force 2D sound
         audioSource.Stop(); //avoids audiosource from starting to play automatically
+        //ReadPinkNoise();
     }
 
     void SaveArrayAsCSV<T>(T[] arrayToSave, string fileName)
@@ -32,6 +39,20 @@ public class audioEntrainment : MonoBehaviour
             for (int j = 0; j<arrayToSave.Length; j += 2)
             {
                 file.Write(arrayToSave[j].ToString().Replace(',', '.') + "," + arrayToSave[j+1].ToString().Replace(',', '.') + '\n');
+            }
+        }
+    }
+
+    void ReadPinkNoise() 
+    {
+
+        using (var rd = new StreamReader("pinkNoise.csv"))
+        {
+            while (!rd.EndOfStream)
+            {
+                var value = rd.ReadLine();
+                float floatValue = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
+                pinkNoise.Add(floatValue);
             }
         }
     }
@@ -81,16 +102,15 @@ public class audioEntrainment : MonoBehaviour
     {
         for (int i = 0; i < data.Length; i += channels)
         {
-            data[i] = CreatePinkNoise(timeIndex, sampleRate);
+            data[i] = pinkNoise[timeIndex];
 
             if (channels == 2)
-                data[i + 1] = data[i];
+                data[i + 1] = pinkNoise[timeIndex];
 
             timeIndex++;
-            if ((float)timeIndex == sampleRate * 2.0f)
+            if ((float)timeIndex == pinkNoise.Count)
             {
-                //Debug.Log("reset time index");
-                timeIndex -= (int)(sampleRate);
+                timeIndex = 0;
             }
 
         }
@@ -104,7 +124,7 @@ public class audioEntrainment : MonoBehaviour
         }
         else 
         {
-            generatePinkNoise(ref data, channels);
+            //generatePinkNoise(ref data, channels);
         }
     }
 
