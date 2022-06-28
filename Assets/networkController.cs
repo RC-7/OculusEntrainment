@@ -7,13 +7,14 @@ public class networkController : MonoBehaviour
 {
     private float refreshRateNormal = 30.0f;
     private float shortPoll = 15.0f;
+    private float initialPollDelay = 1.0f;
     private bool normalPoll = true;
     private string serverResponse;
     private AWSResourceValues awsResourceValues;
     private SettingsObject settings;
     private string entrainmentDataType = "entrainmentSettings";
 
-    // Add update to color of ball
+    // TODO Add update to color of ball
     private void updateVisualEntrainment()
     {
         GameObject visualEntrainmentObject = GameObject.Find("visualEntrainment");
@@ -85,17 +86,14 @@ public class networkController : MonoBehaviour
                 // Refresh sooner
                 Debug.Log(www.error);
                 CancelInvoke();
-                InvokeRepeating("querrySettings", 1.0f, shortPoll);
+                InvokeRepeating("querrySettings", initialPollDelay, shortPoll);
                 normalPoll = false;
             }
             else
             {
                 serverResponse = www.downloadHandler.text;
-                Debug.Log(www.downloadHandler.text);
                 string settingJSONString = www.downloadHandler.text.Substring(23, www.downloadHandler.text.Length - 25);
-                Debug.Log(settingJSONString);
                 SettingsObject settingsRecieved = ImportJsonString<SettingsObject>(settingJSONString);
-                Debug.Log(settingsRecieved.visual.frequency);
                 if (JsonUtility.ToJson(settingsRecieved) != JsonUtility.ToJson(settings))
                 {
                     settings = settingsRecieved;
@@ -103,7 +101,7 @@ public class networkController : MonoBehaviour
                     if (!normalPoll)
                     {
                         CancelInvoke();
-                        InvokeRepeating("querrySettings", 1.0f, refreshRateNormal);
+                        InvokeRepeating("querrySettings", initialPollDelay, refreshRateNormal);
                     }
 
                 }
@@ -120,7 +118,7 @@ public class networkController : MonoBehaviour
     void Start()
     {
         awsResourceValues = ImportJson<AWSResourceValues>("aws_resources");
-        InvokeRepeating("querrySettings", 1.0f, refreshRateNormal);
+        InvokeRepeating("querrySettings", initialPollDelay, refreshRateNormal);
     }
 
 void Update()

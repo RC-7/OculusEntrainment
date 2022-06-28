@@ -7,8 +7,8 @@ using System.Globalization;
 
 public class audioEntrainment : MonoBehaviour
 {
-    public float frequency1;
-    public float frequency2;
+    public float baseFrequency;
+    public float entrainedFrequency;
     public float sampleRate = 48000;
     System.Random rng = new System.Random();
     AudioSource audioSource;
@@ -19,17 +19,16 @@ public class audioEntrainment : MonoBehaviour
     void Start()
     {
         // Defaults to Alpha waves
-        frequency1 = 450.0f;
-        frequency2 = 460.0f;
+        baseFrequency = 450.0f;
+        entrainedFrequency = 460.0f;
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
         pinkNoiseWav = Resources.Load<AudioClip>("pinkNoise");
         audioSource.clip = pinkNoiseWav;
         audioSource.playOnAwake = false;
         audioSource.volume = 0.5f;
-        audioSource.spatialBlend = 0; //force 2D sound
-        audioSource.Stop(); //avoids audiosource from starting to play automatically
-        //ReadPinkNoise();
+        audioSource.spatialBlend = 0;
+        audioSource.Stop();
     }
 
     void SaveArrayAsCSV<T>(T[] arrayToSave, string fileName)
@@ -43,34 +42,20 @@ public class audioEntrainment : MonoBehaviour
         }
     }
 
-    void ReadPinkNoise() 
-    {
-
-        using (var rd = new StreamReader("pinkNoise.csv"))
-        {
-            while (!rd.EndOfStream)
-            {
-                var value = rd.ReadLine();
-                float floatValue = float.Parse(value, CultureInfo.InvariantCulture.NumberFormat);
-                pinkNoise.Add(floatValue);
-            }
-        }
-    }
 
     void Update()
     {
 
         if (!audioSource.isPlaying)
         {
-            //Debug.Log("Resetting");
             audioSource.Play();
         }
     }
 
     public void UpdateAudioEntrainment(float baseFrequency, float entrainmentFrequency)
     {
-        frequency1 = baseFrequency;
-        frequency2 = baseFrequency + entrainmentFrequency;
+        this.baseFrequency = baseFrequency;
+        entrainedFrequency = baseFrequency + entrainmentFrequency;
 
         if (!audioSource.isPlaying)
         {
@@ -83,64 +68,33 @@ public class audioEntrainment : MonoBehaviour
     {
         for (int i = 0; i < data.Length; i += channels)
         {
-            data[i] = CreateSine(timeIndex, frequency1, sampleRate);
+            data[i] = CreateSine(timeIndex, baseFrequency, sampleRate);
 
             if (channels == 2)
-                data[i + 1] = CreateSine(timeIndex, frequency2, sampleRate);
+                data[i + 1] = CreateSine(timeIndex, entrainedFrequency, sampleRate);
 
             timeIndex++;
             if ((float)timeIndex == sampleRate * 2.0f)
             {
-                //Debug.Log("reset time index");
                 timeIndex -= (int)(sampleRate);
             }
 
         }
     }
 
-    void generatePinkNoise(ref float[] data, int channels)
-    {
-        for (int i = 0; i < data.Length; i += channels)
-        {
-            data[i] = pinkNoise[timeIndex];
-
-            if (channels == 2)
-                data[i + 1] = pinkNoise[timeIndex];
-
-            timeIndex++;
-            if ((float)timeIndex == pinkNoise.Count)
-            {
-                timeIndex = 0;
-            }
-
-        }
-    }
 
     void OnAudioFilterRead(float[] data, int channels)
     {
-        if (frequency1 != - 1)
+        if (baseFrequency != - 1)
         {
             generateBinauralBeat(ref data, channels);
         }
         else 
         {
-            //generatePinkNoise(ref data, channels);
+            // Do nothing as the Audio clip has pink noise
         }
     }
 
-    
-    public float CreatePinkNoise(int timeIndex, float sampleRate)
-    {
-        
-        float noise_value = 0.0f;
-        for (int i = 0; i <= 100; i++)
-        {
-            float randomPhase = (float)rng.Next(180);
-            float amplitudeScaling = (float)System.Math.Pow(i, -0.4);
-            noise_value += amplitudeScaling*CreateSine(timeIndex, (float)i, sampleRate, randomPhase);
-        }
-        return noise_value;
-    }
     
 
     public float CreateSine(int timeIndex, float frequency, float sampleRate, float phase = 0)
