@@ -56,6 +56,7 @@ public class audioEntrainment : MonoBehaviour
     {
         this.baseFrequency = baseFrequency;
         entrainedFrequency = baseFrequency + entrainmentFrequency;
+        Debug.Log(entrainedFrequency);
 
         if (!audioSource.isPlaying)
         {

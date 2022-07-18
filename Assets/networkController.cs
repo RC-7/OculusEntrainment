@@ -5,8 +5,8 @@ using UnityEngine.Networking;
 
 public class networkController : MonoBehaviour
 {
-    private float refreshRateNormal = 30.0f;
-    private float shortPoll = 15.0f;
+    private float refreshRateNormal = 10.0f;
+    private float shortPoll = 5.0f;
     private float initialPollDelay = 1.0f;
     private bool normalPoll = true;
     private string serverResponse;
@@ -92,6 +92,7 @@ public class networkController : MonoBehaviour
             else
             {
                 serverResponse = www.downloadHandler.text;
+                Debug.Log(serverResponse);
                 string settingJSONString = www.downloadHandler.text.Substring(23, www.downloadHandler.text.Length - 25);
                 SettingsObject settingsRecieved = ImportJsonString<SettingsObject>(settingJSONString);
                 if (JsonUtility.ToJson(settingsRecieved) != JsonUtility.ToJson(settings))
@@ -110,7 +111,7 @@ public class networkController : MonoBehaviour
         }
     }
 
-    // Querries settings from API on AWS every 30 s in normal operation
+    // Querries settings from API on AWS every 10 s in normal operation
     private void querrySettings()
     {
         StartCoroutine(makeRequest()); // Allows the coroutine to be non blocking
