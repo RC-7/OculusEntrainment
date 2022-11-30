@@ -57,5 +57,5 @@ Entrainment Unity VR game that can be used to interact with Audio and Visual ent
     }
 }
 ```
-
+- A `baseFrequency` audio entrainment setting of -`1` will result in a pink noise audio stimulus. This can be used as a good control stimulus.
 - A working API system has been developed and open sourced in the [entrainmentInfrastructure](https://github.com/RC-7/entrainmentInfrastructure) repository. This uses Terraform and, therefore, can be pulled up with minimal effort or technical knowledge.
