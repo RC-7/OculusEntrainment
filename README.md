@@ -7,7 +7,7 @@ Entrainment Unity VR game that can be used to interact with Audio and Visual ent
 - Large ball: Visual entrainment element
 - Smaller ball: Neurofeedback element
 
-![](images/WorldExample.jpg?raw=true)
+![](Images/WorldExample.jpg?raw=true)
 
 ## System rundown
 - Game defaults to Alpha wave entrainment through audio and visual entrainment.
