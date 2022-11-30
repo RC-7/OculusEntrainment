@@ -6,9 +6,7 @@ using UnityEngine.Networking;
 public class networkController : MonoBehaviour
 {
     private float refreshRateNormal = 10.0f;
-    private float shortPoll = 5.0f;
     private float initialPollDelay = 1.0f;
-    private bool normalPoll = true;
     private string serverResponse;
     private AWSResourceValues awsResourceValues;
     private SettingsObject settings;
@@ -83,11 +81,7 @@ public class networkController : MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                // Refresh sooner
                 Debug.Log(www.error);
-                CancelInvoke();
-                InvokeRepeating("querrySettings", initialPollDelay, shortPoll);
-                normalPoll = false;
             }
             else
             {
@@ -99,11 +93,6 @@ public class networkController : MonoBehaviour
                 {
                     settings = settingsRecieved;
                     updateEntrainment();
-                    if (!normalPoll)
-                    {
-                        CancelInvoke();
-                        InvokeRepeating("querrySettings", initialPollDelay, refreshRateNormal);
-                    }
 
                 }
 
